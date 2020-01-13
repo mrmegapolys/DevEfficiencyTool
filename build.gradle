@@ -1,6 +1,9 @@
 plugins {
     id 'java'
+    id 'application'
 }
+
+mainClassName = 'ru.sber.Application'
 
 group 'ru.sber'
 version '1.0-SNAPSHOT'
@@ -12,4 +15,5 @@ repositories {
 }
 
 dependencies {
+    compile 'net.java.dev.jna:jna-platform:5.5.0'
 }
