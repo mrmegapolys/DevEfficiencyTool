@@ -2,6 +2,7 @@ package ru.sber;
 
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.WinDef.HWND;
+import com.sun.jna.ptr.IntByReference;
 
 import java.util.logging.Logger;
 
@@ -19,15 +20,25 @@ public class ActiveWindowLogger {
 
     private void run(long pollingDelay) {
         while (true) {
-            log.info(getActiveWindowName());
+            log.info(getActiveWindowInfo());
             sleep(pollingDelay);
         }
     }
 
-    private String getActiveWindowName() {
+    private String getActiveWindowInfo() {
         HWND hwnd = INSTANCE.GetForegroundWindow();
+        return String.format("TITLE: %s; PID: %s", getActiveWindowTitle(hwnd), getActiveWindowPID(hwnd));
+    }
+
+    private String getActiveWindowTitle(HWND hwnd) {
         INSTANCE.GetWindowText(hwnd, buffer, MAX_TITLE_LENGTH);
         return Native.toString(buffer);
+    }
+
+    private Integer getActiveWindowPID(HWND hwnd) {
+        IntByReference pidRef = new IntByReference();
+        INSTANCE.GetWindowThreadProcessId(hwnd, pidRef);
+        return pidRef.getValue();
     }
 
     private void sleep(long millis) {
